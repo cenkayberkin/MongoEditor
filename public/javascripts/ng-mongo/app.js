@@ -1,19 +1,36 @@
 /**
  * Created by cenk on 3/9/14.
  */
-var ngMongo = angular.module('ngMongo',[]);
+var ngMongo = angular.module('ngMongo',['ngResource']);
 
-ngMongo.factory('Mongo',function($http){
+ngMongo.factory('Mongo',function($resource){
   return {
-    database:function(){
-      return $http.get('/mongo-api/dbs');
-    }
+    database : $resource('/mongo-api/dbs')
   }
 });
 
 ngMongo.controller('ListCtrl' , function($scope,Mongo){
-  var result = Mongo.database();
-  result.success(function (data){
-    $scope.items = data;
-  });
+  $scope.items = Mongo.database.query({},isArray = true);
+  //DB = $scope.items;
+
+
+  $scope.addDb = function(){
+
+    var dbName = $scope.newDbName;
+    if(dbName){
+      var newDb = new Mongo.database({name:dbName});
+      newDb.$save();
+      $scope.items.push(newDb);
+
+    }
+  };
+
+  $scope.removeDb = function(db){
+    if(confirm("Delete this database ? There is no undo ...")){
+      db.$delete({name:db.name});
+      $scope.items.splice($scope.items.indexOf(db),1);
+
+    }
+  };
+
 });
