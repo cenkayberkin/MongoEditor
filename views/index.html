@@ -43,31 +43,40 @@
 </div>
 
 <div class="container" ng-app="ngMongo">
-  <div ng-controller="ListCtrl">
-    <div class="span8">
-      <table class="table table-striped">
-        <tbody>
+  <script type="text/ng-template" id="list-template.html">
+    <div  class="row">
+
+      <div class="span8">
+        <table class="table table-striped">
+          <tbody>
           <tr ng-repeat="item in items">
-            <td>{{item.name}}</td>
             <td>
-              <delete-button text="Delete" action="removeDb(item)"></delete-button>
+              <h4>
+                <a href="#/{{item.details}}">{{item.name}}</a>
+              </h4>
+            </td>
+            <td>
+              <delete-button text="Delete" action="removeItem(item)"></delete-button>
             </td>
           </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="span3">
-      <input type="text" ng-model="newDbName">
-      <add-button text="Add" action="addDb()"></add-button>
+          </tbody>
+        </table>
+      </div>
+      <div class="span3">
+        <input type="text" ng-model="newItemName">
+        <add-button text="Add" action="addItem()"></add-button>
+      </div>
 
     </div>
-  </div>
+  </script>
+  <ng-view></ng-view>
 </div>
 
 <script src="/javascripts/vendor/jquery.js"></script>
 <script src="/javascripts/vendor/underscore.js"></script>
 <script src="/javascripts/vendor/angular.js"></script>
 <script src="/javascripts/vendor/angular-resource.js"></script>
+<script src="/javascripts/CustomThings/ng-bootstrap.js"></script>
 <script src="/javascripts/ng-mongo/app.js"></script>
 
 </body>

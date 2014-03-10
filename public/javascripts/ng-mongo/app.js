@@ -3,60 +3,63 @@
  */
 var ngMongo = angular.module('ngMongo',['ngResource']);
 
+ngMongo.config(function($routeProvider){
+  $routeProvider
+    .when("/",{
+      templateUrl:"list-template.html",
+      controller: "ListCtrl"
+    })
+    .when("/:database",{
+      templateUrl:"list-template.html",
+      controller: "ListCtrl"
+    });
+});
+
 ngMongo.factory('Mongo',function($resource){
   return {
-    database : $resource('/mongo-api/dbs')
+    database : $resource('/mongo-api/dbs'),
+    collection: $resource('/mongo-api/:database')
   }
 });
 
-ngMongo.directive("deleteButton",function(){
-  return {
-    restrict: "E",
-    transclude:true,
-    replace:true,
-    scope:{
-      text:"@",
-      action:"&",
-      comment: "="
-    },
-    template:"<button class='btn btn-danger' ng-click='action()' ng-transclude><i class='icon icon-remove icon-white'></i>{{text}}</button>"
+ngMongo.directive("deleteButton",CustomThings.Bootstrap.deleteButton);
+
+ngMongo.directive("addButton",CustomThings.Bootstrap.addButton);
+
+ngMongo.controller('ListCtrl' , function($scope,$routeParams,Mongo){
+
+  //console.log($routeParams);
+  var context = "database";
+  if($routeParams.database){
+    context = "collection";
   }
-});
 
-ngMongo.directive("addButton",function(){
-  return{
-    restrict: "E",
-    scope:{
-      action:"&",
-      text:"@"
-    },
-    template:"<button class='btn btn-success' ng-click='action()'><i class='icon icon-white icon-plus-sign'></i>{{text}}</button>"
+  $scope.items = Mongo[context].query($routeParams);
 
-   }
-});
+  /*if($routeParams.database){
+    $scope.items = Mongo.collection.query({database:$routeParams.database});
+  }else{
+    $scope.items = Mongo.database.query({},isArray = true);
+  }*/
 
-ngMongo.controller('ListCtrl' , function($scope,Mongo){
-  $scope.items = Mongo.database.query({},isArray = true);
   //DB = $scope.items;
 
+  $scope.addItem = function(){
 
-  $scope.addDb = function(){
-
-    var dbName = $scope.newDbName;
-    if(dbName){
-      var newDb = new Mongo.database({name:dbName});
-      newDb.$save();
-      $scope.items.push(newDb);
-
+    var newItemName = $scope.newItemName;
+    if(newItemName){
+      var newItem = new Mongo[context]({name: newItemName});
+      newItem.$save($routeParams);
+      $scope.items.push(newItem);
     }
   };
 
-  $scope.removeDb = function(db){
-    if(confirm("Delete this database ? There is no undo ...")){
-      db.$delete({name:db.name});
-      $scope.items.splice($scope.items.indexOf(db),1);
-
+  $scope.removeItem = function(item){
+    if(confirm("Delete this " + context +"? There is no undo ...")){
+      var params = {name: item.name};
+      if($routeParams.database) params.database = $routeParams.database;
+      item.$delete(params);
+      $scope.items.splice($scope.items.indexOf(item),1);
     }
   };
-
 });
