@@ -50,7 +50,7 @@
           <tr ng-repeat="item in items">
             <td>{{item.name}}</td>
             <td>
-              <delete-button text="Delete">Remove</delete-button>
+              <delete-button text="Delete" action="removeDb(item)"></delete-button>
             </td>
           </tr>
         </tbody>

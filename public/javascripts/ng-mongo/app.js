@@ -14,13 +14,12 @@ ngMongo.directive("deleteButton",function(){
     restrict: "E",
     transclude:true,
     replace:true,
-    link: function(scope,el,atts){
-      var buttonText ="<button class='btn btn-danger' ng-click='removeDb(item)' ng-transclude><i class='icon icon-remove icon-white'></i>"+ atts.text+"</button>";
-      el.html(buttonText);
-      el.on("click",function(){
-        scope.removeDb(scope.item);
-      });
-    }
+    scope:{
+      text:"@",
+      action:"&",
+      comment: "="
+    },
+    template:"<button class='btn btn-danger' ng-click='action()' ng-transclude><i class='icon icon-remove icon-white'></i>{{text}}</button>"
   }
 });
 
