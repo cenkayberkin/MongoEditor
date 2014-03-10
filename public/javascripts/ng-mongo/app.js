@@ -9,6 +9,15 @@ ngMongo.factory('Mongo',function($resource){
   }
 });
 
+ngMongo.directive("deleteButton",function(){
+  return {
+    restrict: "E",
+    transclude:true,
+    replace:true,
+    template:"<button class='btn btn-danger' ng-click='removeDb(item)' ng-transclude><i class='icon icon-remove icon-white'></i></button>"
+  }
+});
+
 ngMongo.controller('ListCtrl' , function($scope,Mongo){
   $scope.items = Mongo.database.query({},isArray = true);
   //DB = $scope.items;
