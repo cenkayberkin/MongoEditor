@@ -23,6 +23,18 @@ ngMongo.directive("deleteButton",function(){
   }
 });
 
+ngMongo.directive("addButton",function(){
+  return{
+    restrict: "E",
+    scope:{
+      action:"&",
+      text:"@"
+    },
+    template:"<button class='btn btn-success' ng-click='action()'><i class='icon icon-white icon-plus-sign'></i>{{text}}</button>"
+
+   }
+});
+
 ngMongo.controller('ListCtrl' , function($scope,Mongo){
   $scope.items = Mongo.database.query({},isArray = true);
   //DB = $scope.items;
